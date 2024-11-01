@@ -1,0 +1,96 @@
+<style>
+    .topbar .navbar-light .navbar-nav .nav-item > a.nav-link {
+        color: #000 !important;
+    }
+    .title-1 {
+        color: white;
+        font-weight: bold;
+        font-size: 4rem;
+        letter-spacing: .2rem;
+    }
+    .title-2 {
+        color: #FFB703;
+        font-weight: bold;
+        font-size: 4rem;
+        letter-spacing: .2rem;
+    }
+    .carousel-caption {
+        bottom: 100px !important;
+    }
+</style>
+<header class="topbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Aula Digital</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#vision">Visión <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#mision">Misión <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#nosotros">Nosotros <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <div class="form-inline my-2 my-lg-0">
+                <button class="btn btn-warning my-2 my-sm-0" type="button" (click)="goToRoute('login')">Iniciar sesión</button>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img class="d-block w-100" src="./../../../../assets/images/login.png" alt="First slide">
+            <div class="carousel-caption d-none d-md-block text-left">
+                <h1 class="title-1">AULA</h1>
+                <h1 class="title-2">DIGITAL</h1>
+                <p>ESCUELA CHIACAL, TACTIC ALTA VERAPAZ</p>
+                <button class="btn btn-warning my-2 my-sm-0" type="button" (click)="goToRoute('login')">Iniciar sesión</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row pb-3 pt-3" id="vision">
+        <div class="col-6">
+            <img src="./../../../../assets/images/login.png" class="rounded img-fluid"  width="600" height="750">
+        </div>
+        <div class="col-6 text-center" >
+            <h1>Misión</h1>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            </p>
+        </div>
+    </div>
+
+    <div class="row pb-3 pt-3" id="mision">
+        <div class="col-6 text-center" >
+            <h1>Visión</h1>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            </p>
+        </div>
+        <div class="col-6">
+            <img src="./../../../../assets/images/login.png" class="rounded img-fluid"  width="600" height="750">
+        </div>
+    </div>
+
+    <div class="row pb-3 pt-3" id="nosotros">
+        <div class="col-6">
+            <img src="./../../../../assets/images/login.png" class="rounded img-fluid"  width="600" height="750">
+        </div>
+        <div class="col-6 text-center" >
+            <h1>Sobre nosotros</h1>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            </p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-themecolor">{{ data?.nombre }}</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Materias</a>
+            </li>
+            <li class="breadcrumb-item" href="javascript:void(0)">
+                <a href="javascript:void(0)">{{ data?.asignacion_maestro?.curso?.nombre }}</a>
+            </li>
+            <li class="breadcrumb-item active">{{ data?.nombre }}</li>
+        </ol>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+
+<div id="cuestionario" class="card" *ngFor="let item of preguntas; let i = index">
+    <div class="card-body">
+        <h4 class="card-title">{{ item.pregunta }}</h4>
+        <select class="form-control" *ngIf="item.tipo_pregunta == 'FV'" id="respuesta{{ item.id }}" (change)="onSeleccion(i, $event)">
+            <option value="">Seleccione una opción</option>
+            <option value="FALSO">Falso</option>
+            <option value="VERDADERO">Verdadero</option>
+        </select>
+        <select class="form-control" *ngIf="item.tipo_pregunta == 'MULTIPLE'" id="respuesta{{ item.id }}" (change)="onSeleccion(i, $event)">
+            <option value="">Seleccione una opción</option>
+            <option *ngIf="item.respuesta1" value="RESPUESTA1">{{ item.respuesta1 }}</option>
+            <option *ngIf="item.respuesta2" value="RESPUESTA2">{{ item.respuesta2 }}</option>
+            <option *ngIf="item.respuesta3" value="RESPUESTA3">{{ item.respuesta3 }}</option>
+            <option *ngIf="item.respuesta4" value="RESPUESTA4">{{ item.respuesta4 }}</option>
+        </select>
+        <input *ngIf="item.tipo_pregunta == 'DIRECTA'" type="text" class="form-control" id="respuesta{{ item.id }}" placeholder="Escribe tu respuesta"
+        (change)="onInputRespuesta(i, $event)">
+    </div>
+</div>
+
+<div class="row p-b-10">
+    <div class="col-lg-6 col-md-12">
+        <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" (click)="guardarPunteo()">
+            Finalizar
+        </button>
+    </div>
+</div>

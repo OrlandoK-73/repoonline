@@ -1,0 +1,214 @@
+<div class="row p-b-10">
+    <div class="col-lg-6 col-md-12">
+        <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" data-toggle="modal"
+            data-target="#modalFormDataAdd">
+            Agregar
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Año</th>
+                        <th>Grado</th>
+                        <th>Sección</th>
+                        <th>Estudiante</th>
+                        <th>Correo</th>
+                        <th>Fecha Creación</th>
+                        <th>Fecha Actualización</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data">
+                        <th>{{item.id}}</th>
+                        <td>{{item.anio}}</td>
+                        <td>{{item.grado.nombre}}</td>
+                        <td>{{item.seccion.nombre}}</td>
+                        <td>{{item.estudiante.nombres}} {{item.estudiante.apellidos}}</td>
+                        <td>{{item.estudiante.email}}</td>
+                        <td>{{item.createdAt | date: 'd/M/yyyy, h:mm a'}}</td>
+                        <td>{{item.updatedAt | date: 'd/M/yyyy, h:mm a'}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary text-uppercase btn-rounded" alt="default"
+                                    data-toggle="modal" data-target="#modalFormDataUpdate" (click)="getSingle(item)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger text-uppercase btn-rounded"
+                                    (click)="delete(item.id)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="create()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar Asignación</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Año</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="anio"
+                                name="anio">
+                            <div class="has-danger" *ngIf="anio?.invalid && (anio?.dirty || anio?.touched)">
+                                <div *ngIf="anio?.errors?.required" class="form-control-feedback">
+                                    El año es un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="anio?.invalid && (anio?.dirty || anio?.touched)">
+                                <div *ngIf="anio?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 4 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Estudiante</label>
+                            <select class="form-control" formControlName="estudianteId" name="estudianteId">
+                                <option [value]="item.id" *ngFor="let item of estudiantes">{{ item.nombres }} {{ item.apellidos }} - {{ item.email }}</option>
+                            </select>
+                            <div class="has-danger" *ngIf="estudianteId?.invalid && (estudianteId?.dirty || estudianteId?.touched)">
+                                <div *ngIf="estudianteId?.errors?.required" class="form-control-feedback">
+                                    El usuario es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Grado</label>
+                            <select class="form-control" formControlName="gradoId" name="gradoId">
+                                <option [value]="item.id" *ngFor="let item of grados">{{ item.nombre }}</option>
+                            </select>
+                            <div class="has-danger" *ngIf="gradoId?.invalid && (gradoId?.dirty || gradoId?.touched)">
+                                <div *ngIf="gradoId?.errors?.required" class="form-control-feedback">
+                                    El grado es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Sección</label>
+                            <select class="form-control" formControlName="seccionId" name="seccionId">
+                                <option [value]="item.id" *ngFor="let item of secciones">{{ item.nombre }}</option>
+                            </select>
+                            <div class="has-danger" *ngIf="seccionId?.invalid && (seccionId?.dirty || seccionId?.touched)">
+                                <div *ngIf="seccionId?.errors?.required" class="form-control-feedback">
+                                    La sección es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                   MODAL RESPONSIVE ACTUALIZA                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataUpdate" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="update()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Actualizar Asignación</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Año</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="anio"
+                                name="anio">
+                            <div class="has-danger" *ngIf="anio?.invalid && (anio?.dirty || anio?.touched)">
+                                <div *ngIf="anio?.errors?.required" class="form-control-feedback">
+                                    El año es un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="anio?.invalid && (anio?.dirty || anio?.touched)">
+                                <div *ngIf="anio?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 4 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Estudiante</label>
+                            <select class="form-control" formControlName="estudianteId" name="estudianteId">
+                                <option [value]="item.id" *ngFor="let item of estudiantes">{{ item.nombres }} {{ item.apellidos }} - {{ item.email }}</option>
+                            </select>
+                            <div class="has-danger" *ngIf="estudianteId?.invalid && (estudianteId?.dirty || estudianteId?.touched)">
+                                <div *ngIf="estudianteId?.errors?.required" class="form-control-feedback">
+                                    El usuario es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Grado</label>
+                            <select class="form-control" formControlName="gradoId" name="gradoId">
+                                <option [value]="item.id" *ngFor="let item of grados">{{ item.nombre }}</option>
+                            </select>
+                            <div class="has-danger" *ngIf="gradoId?.invalid && (gradoId?.dirty || gradoId?.touched)">
+                                <div *ngIf="gradoId?.errors?.required" class="form-control-feedback">
+                                    El grado es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Sección</label>
+                            <select class="form-control" formControlName="seccionId" name="seccionId">
+                                <option [value]="item.id" *ngFor="let item of secciones">{{ item.nombre }}</option>
+                            </select>
+                            <div class="has-danger" *ngIf="seccionId?.invalid && (seccionId?.dirty || seccionId?.touched)">
+                                <div *ngIf="seccionId?.errors?.required" class="form-control-feedback">
+                                    La sección es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                  MODAL RESPONSIVE ACTUALIZAR                   -->
+<!-- ============================================================== -->

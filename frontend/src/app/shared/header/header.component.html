@@ -1,0 +1,78 @@
+<!-- ============================================================== -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<header class="topbar">
+    <nav class="navbar top-navbar navbar-expand-md navbar-light">
+        <!-- ============================================================== -->
+        <!-- Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.html">
+                <!-- Logo icon --><b>
+                    <img width="auto" height="40" src="./../../../assets/images/umg.png" alt="homepage"/>
+                    <!-- <div class="light-logo">AD</div> -->
+                </b>
+                <!--End Logo icon -->
+                <!-- Logo text --><span>
+                    <!-- dark Logo text -->
+                    <!-- <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo" /> -->
+                    <!-- Light Logo text -->    
+                    <div class="light-logo">Aula Digital</div>    
+                </span> </a>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-collapse">
+            <!-- ============================================================== -->
+            <!-- toggle and nav items -->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav mr-auto">
+                <!-- This is  -->
+                <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                
+            </ul>
+            <!-- ============================================================== -->
+            <!-- User profile and search -->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav my-lg-0">
+                <!-- ============================================================== -->
+                <!--                    MOSTRAR DETALLE PERFIL                      -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="./../../../assets/images/maestro.png" alt="user" class="profile-pic" /></a>
+                    <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                        <ul class="dropdown-user">
+                            <li>
+                                <div class="dw-user-box">
+                                    <div class="u-img"><img src="./../../../assets/images/maestro.png" alt="user"></div>
+                                    <div class="u-text">
+                                        <h4>{{ usuario?.nombres }} {{ usuario?.apellidos }}</h4>
+                                        <p class="text-muted">{{ usuario?.email }}</p>
+                                        <a *ngIf="usuario?.rol == 'MAESTRO'"  href="/maestro/mi-perfil" class="btn btn-rounded btn-danger btn-sm">Ver perfil</a>
+                                        <a *ngIf="usuario?.rol == 'ESTUDIANTE'"  href="/estudiante/mi-perfil" class="btn btn-rounded btn-danger btn-sm">Ver perfil</a>
+                                        <a *ngIf="usuario?.rol == 'ADMINISTRADOR'"  href="/administrador/mi-perfil" class="btn btn-rounded btn-danger btn-sm">Ver perfil</a>
+                                        <a *ngIf="usuario?.rol == 'DIRECTOR'"  href="/director/mi-perfil" class="btn btn-rounded btn-danger btn-sm">Ver perfil</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li *ngIf="usuario?.rol == 'MAESTRO'"><a href="/maestro/mi-perfil"><i class="ti-user"></i> Mi perfil</a></li>
+                            <li *ngIf="usuario?.rol == 'DIRECTOR'"><a href="/director/mi-perfil"><i class="ti-user"></i> Mi perfil</a></li>
+                            <li *ngIf="usuario?.rol == 'ADMINISTRADOR'"><a href="/administrador/mi-perfil"><i class="ti-user"></i> Mi perfil</a></li>
+                            <li *ngIf="usuario?.rol == 'ESTUDIANTE'"><a href="/estudiante/mi-perfil"><i class="ti-user"></i> Mi perfil</a></li>
+                            <li><a href="/" (click)="cerrarSesion()"><i class="fa fa-power-off"></i>Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- ============================================================== -->
+                <!--                    MOSTRAR DETALLE PERFIL                      -->
+                <!-- ============================================================== -->
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- ============================================================== -->
+<!-- End Topbar header -->
+<!-- ============================================================== -->

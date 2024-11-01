@@ -1,0 +1,43 @@
+<!-- <link href="./../../../assets/css/pages/login-register-lock.css" rel="stylesheet"> -->
+
+<!-- ============================================================== -->
+<!--                           INICIO DE SESION                     -->
+<!-- ============================================================== -->
+<section id="wrapper">
+    <div class="login-register" style="background-image:url(./../../../assets/images/login.png);">
+        <div class="login-box card">
+            <div class="card-body">
+                <form class="form-horizontal form-material" id="loginFormAulaDigital" [formGroup]="formData" (ngSubmit)="login()">
+                    <h3 class="box-title m-b-20">Inicio de sesión</h3>
+                    <div class="form-group ">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="text" required="" placeholder="Usuario" formControlName="email"> </div>
+                        <div class="has-danger" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                            <div *ngIf="email?.errors?.required" class="form-control-feedback">
+                                El correo es un campo obligatorio
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="password" required="" placeholder="Contraseña" formControlName="password"> </div>
+                        <div class="has-danger" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+                            <div *ngIf="password?.errors?.required" class="form-control-feedback">
+                                La contraseña es un campo obligatorio
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="col-xs-12 p-b-20">
+                            <button class="btn btn-block btn-warning" type="submit" [disabled]="!formData.valid">Iniciar sesión</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!--                           INICIO DE SESION                     -->
+<!-- ============================================================== -->

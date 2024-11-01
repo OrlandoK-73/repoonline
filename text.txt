@@ -1,0 +1,466 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: AulaDigital
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DB_DATABASE: AulaDigital
+      DB_USERNAME: user
+      DB_PASSWORD: password
+      DB_HOST: db
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8081:80"  # Cambia a 8081 si usas ese puerto
+    depends_on:
+      - frontend
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+
+
+
+-------------
+dockerfile backend
+-----
+# Etapa de construcción
+# Dockerfile del frontend
+FROM node:14 AS build
+
+WORKDIR /app
+COPY ./frontend/package*.json ./
+RUN npm install
+COPY ./frontend/ ./
+RUN npm run build --prod
+
+FROM nginx:latest
+COPY --from=build /app/dist/frontend /usr/share/nginx/html                                     
+# Expone el puerto en el que corre Nginx
+EXPOSE 80
+
+-------------
+nginx.conf
+-------------
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include       mime.types;  # Incluye los tipos de archivos MIME
+    default_type  application/octet-stream;
+
+    sendfile        on;  # Mejora la eficiencia del envío de archivos
+    keepalive_timeout  65;  # Mantiene las conexiones abiertas para mejorar la eficiencia
+
+    server {
+        listen       80;  # Escucha en el puerto 80
+        server_name  localhost;  # Nombre del servidor
+
+        location / {
+            root   /usr/share/nginx/html;  # Ruta donde se copian los archivos de la aplicación
+            index  index.html index.htm;  # Archivo de índice por defecto
+            try_files $uri $uri/ /index.html;  # Manejo de rutas de Angular
+        }
+
+        location /api/ {
+            proxy_pass http://backend:3000;  # Redirige las peticiones API al backend
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;  # Evita el caché para las conexiones WebSocket
+        }
+    }
+}
+
+------------------------
+DOCKER-COMPOSE 
+---------------
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: AulaDigital
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./DDL.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DB_DATABASE: AulaDigital
+      DB_USERNAME: user
+      DB_PASSWORD: password
+      DB_HOST: db
+      DB_PORT: 3306
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/logs:/var/log/nginx
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  db_data:
+    name: auladigital_db_data
+
+networks:
+  app-network:
+    driver: bridge
+    name: auladigital_network
+
+-----------------------
+Dockerfile - backend
+----------------------
+FROM node:latest
+
+WORKDIR /usr/src/app
+
+# Instalar MySQL client
+RUN apt-get update && \
+    apt-get install -y default-mysql-client && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copiar archivos de configuración
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY .env.* ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar código fuente
+COPY ./src ./src
+
+# Copiar y configurar script de espera
+COPY wait-for-db.sh ./
+RUN chmod +x wait-for-db.sh && \
+    sed -i 's/\r$//' wait-for-db.sh
+
+# Compilar TypeScript
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["./wait-for-db.sh"]
+---------------------------------
+SERVER.ts
+----------------------------
+import express = require('express');
+import path = require('path');
+import db from '../db/connection';
+import usuario from '../routes/usuarios.routes';
+import grado from '../routes/grado.routes';
+import seccion from '../routes/seccion.routes';
+import curso from '../routes/curso.routes';
+import asignacion_maestro from '../routes/asignacion_maestro.routes';
+import asignacion_estudiante from '../routes/asignacion_estudiante.routes';
+import asistencia from '../routes/asistencia.routes';
+import tarea from '../routes/tarea.routes';
+import pregunta from '../routes/pregunta.routes';
+import tarea_estudiante from '../routes/tarea_estudiante.routes';
+const bodyParser = require('body-parser');
+
+export default class Server {
+    public app: express.Application;
+    public port: number;
+
+    constructor(port: number) {
+        this.app = express();
+        this.port = port;
+
+        this.dbConnection();
+        this.middlewares();
+        this.routes();
+    }
+
+    middlewares() {
+        /**
+         * HEADEARS & CORS
+         */
+        this.app.use((req: any, res: any, next: any) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+            if (req.methods == "OPTIONS") {
+                res.sendStatus(200);
+            } else {
+                next();
+            }
+        });
+
+        // LECTURA DEL BODY
+        this.app.use(express.json({ limit: '100mb' }));
+        this.app.use(express.urlencoded({ limit: '100mb', extended: true }));
+
+        // CARPETA PUBLICA
+        this.publicFolder();
+    }
+
+    /**
+     * CONEXION MYSQL
+     */
+    async dbConnection() {
+        try {
+            await db.authenticate();
+        } catch (error) {
+            throw new Error(String(error));
+        }
+    }
+
+    /**
+     * CARPETA PUBLICA
+     */
+    private publicFolder() {
+        const publicPath = path.resolve(__dirname, '../public');
+        this.app.use(express.static(publicPath));
+    }
+
+    /**
+     * RUTAS
+     */
+    routes() {
+        const api: string = "/api/"
+        this.app.use(api, usuario);
+        this.app.use(api, grado);
+        this.app.use(api, seccion);
+        this.app.use(api, curso);
+        this.app.use(api, asignacion_maestro);
+        this.app.use(api, asignacion_estudiante);
+        this.app.use(api, asistencia);
+        this.app.use(api, tarea);
+        this.app.use(api, pregunta);
+        this.app.use(api, tarea_estudiante);
+    }
+
+    /**
+     * LISTEN PORT
+     */
+    listen() {
+        this.app.listen(this.port, () => {
+            console.log(`Servidor corriendo en puerto ${this.port}`);
+        });
+    }
+
+}
+---------------
+server.ts (funcional)
+---------------
+import express = require('express');
+import path = require('path');
+import db from '../db/connection';
+import usuario from '../routes/usuarios.routes';
+import grado from '../routes/grado.routes';
+import seccion from '../routes/seccion.routes';
+import curso from '../routes/curso.routes';
+import asignacion_maestro from '../routes/asignacion_maestro.routes';
+import asignacion_estudiante from '../routes/asignacion_estudiante.routes';
+import asistencia from '../routes/asistencia.routes';
+import tarea from '../routes/tarea.routes';
+import pregunta from '../routes/pregunta.routes';
+import tarea_estudiante from '../routes/tarea_estudiante.routes';
+
+export default class Server {
+    public app: express.Application;
+    public port: number;
+    private apiPath: string = '/api';
+
+    constructor(port: number) {
+        this.app = express();
+        this.port = port;
+        
+        this.dbConnection();
+        this.middlewares();
+        this.routes();
+        this.logRegisteredRoutes();
+    }
+
+    middlewares() {
+        // CORS
+        this.app.use(express.json());  // Asegurarse de poder procesar JSON en las peticiones
+        this.app.use(express.static(path.join(__dirname, 'public')));  // Si tienes archivos estáticos
+
+
+        this.app.use((req, res, next) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
+            if (req.method === "OPTIONS") {
+                return res.sendStatus(200);
+            }
+            next();
+        });
+
+        // Body Parser
+        this.app.use(express.json({ limit: '100mb' }));
+        this.app.use(express.urlencoded({ limit: '100mb', extended: true }));
+
+        // Carpeta Pública
+        this.publicFolder();
+    }
+
+    async dbConnection() {
+        try {
+            await db.authenticate();
+            console.log('Database online... exito');
+        } catch (error) {
+            throw new Error(`Error de conexión a la base de datos: ${error}`);
+        }
+    }
+
+    private publicFolder() {
+        const publicPath = path.resolve(__dirname, '../public');
+        this.app.use(express.static(publicPath));
+    }
+
+    routes() {
+        // API Routes
+        this.app.use(this.apiPath, usuario);
+        this.app.use(this.apiPath, grado);
+        this.app.use(this.apiPath, seccion);
+        this.app.use(this.apiPath, curso);
+        this.app.use(this.apiPath, asignacion_maestro);
+        this.app.use(this.apiPath, asignacion_estudiante);
+        this.app.use(this.apiPath, asistencia);
+        this.app.use(this.apiPath, tarea);
+        this.app.use(this.apiPath, pregunta);
+        this.app.use(this.apiPath, tarea_estudiante);
+
+        // Ruta principal
+        this.app.get('/', (req, res) => {
+            res.json({
+                msg: 'API Online',
+                endpoints: `${this.apiPath}/*`
+            });
+        });
+
+        // Manejo de rutas no encontradas
+        this.app.use('*', (req, res) => {
+            res.status(404).json({
+                msg: 'Route not found',
+                path: req.originalUrl
+            });
+        });
+    }
+
+    listen() {
+        this.app.listen(this.port, () => {
+            console.log(`Servidor corriendo en puerto ${this.port}`);
+            console.log(`API disponible en http://localhost:${this.port}${this.apiPath}`);
+        });
+    }
+    private logRegisteredRoutes() {
+        console.log('Rutas registradas:');
+        this.app._router.stack.forEach((middleware: any) => {
+            if (middleware.route) {
+                console.log(`${Object.keys(middleware.route.methods)} ${middleware.route.path}`);
+            } else if (middleware.name === 'router') {
+                middleware.handle.stack.forEach((handler: any) => {
+                    if (handler.route) {
+                        const path = handler.route.path;
+                        const methods = Object.keys(handler.route.methods);
+                        console.log(`${methods} ${this.apiPath}${path}`);
+                    }
+                });
+            }
+        });
+    }
+}

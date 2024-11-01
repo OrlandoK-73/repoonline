@@ -1,0 +1,217 @@
+<link href="../../../assets/css/pages/tab-page.css" rel="stylesheet">
+
+
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-themecolor">{{ data?.curso?.nombre }}</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Materias</a>
+            </li>
+            <li class="breadcrumb-item active">{{ data?.curso?.nombre }}</li>
+        </ol>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                          NAV PILLS                             -->
+<!-- ============================================================== -->
+<ul class="nav nav-pills nav-fill mb-3" id="myTabStudent" role="tablist">
+  <a class="nav-item nav-link active" id="tareas-student-tab" data-toggle="tab" href="#tareas-student" role="tab" aria-controls="tareas-student" aria-selected="true">Tareas</a>
+  <a (click)="obtenerAsistencia()" class="nav-item nav-link" id="asistencia-student-tab" data-toggle="tab" href="#asistencia-student" role="tab" aria-controls="asistencia-student" aria-selected="false">Asistencias</a>
+  <a (click)="obtenerNotas()" class="nav-item nav-link" id="notas-student-tab" data-toggle="tab" href="#notas-student" role="tab" aria-controls="notas-student" aria-selected="false">Notas</a>
+</ul>
+
+<div class="tab-content" id="myTabStudentContent">
+  <div class="tab-pane fade show active" id="tareas-student" role="tabpanel" aria-labelledby="tareas-student-tab">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Bimestre I</h4>
+            <div class="row">
+                <div class="col-md-4" *ngFor="let item of tareasBimestreI">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            <h4 class="m-b-0">{{ item?.nombre }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'TAREA'">Sube tu tarea seleccionando el archivo correspondiente desde tu dispositivo. </p>
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'EVALUACION'">Contesta todas las preguntas y asegúrate de revisar tus respuestas antes de enviar el parcial. </p>
+                            <button [disabled]="item.realizado" class="btn btn-primary" *ngIf="item.tipo_tarea == 'TAREA'" data-toggle="modal" data-target="#modalFormDataAdd" (click)="getSingleTarea(item)"><i class="fa fa-cloud-upload"></i> Subir tarea</button>
+                            <a routerLink="/estudiante/examen/{{item.id}}" class="btn btn-warning" *ngIf="item.tipo_tarea == 'EVALUACION' && !item.realizado"><i class="fa fa-file-text-o"></i> Contestar</a>
+                            <button [disabled]="item.realizado" routerLink="/estudiante/examen/{{item.id}}" class="btn btn-warning" *ngIf="item.tipo_tarea == 'EVALUACION' && item.realizado"><i class="fa fa-file-text-o"></i> Contestar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="card-title">Bimestre II</h4>
+            <div class="row">
+                <div class="col-md-4" *ngFor="let item of tareasBimestreII">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            <h4 class="m-b-0">{{ item?.nombre }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'TAREA'">Sube tu tarea seleccionando el archivo correspondiente desde tu dispositivo. </p>
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'EVALUACION'">Contesta todas las preguntas y asegúrate de revisar tus respuestas antes de enviar el parcial. </p>
+                            <button class="btn btn-primary" *ngIf="item.tipo_tarea == 'TAREA'" data-toggle="modal" data-target="#modalFormDataAdd" (click)="getSingleTarea(item)"><i class="fa fa-cloud-upload"></i> Subir tarea</button>
+                            <button class="btn btn-warning" *ngIf="item.tipo_tarea == 'EVALUACION'"><i class="fa fa-file-text-o"></i> Contestar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="card-title">Bimestre III</h4>
+            <div class="row">
+                <div class="col-md-4" *ngFor="let item of tareasBimestreIII">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            <h4 class="m-b-0">{{ item?.nombre }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'TAREA'">Sube tu tarea seleccionando el archivo correspondiente desde tu dispositivo. </p>
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'EVALUACION'">Contesta todas las preguntas y asegúrate de revisar tus respuestas antes de enviar el parcial. </p>
+                            <button class="btn btn-primary" *ngIf="item.tipo_tarea == 'TAREA'" data-toggle="modal" data-target="#modalFormDataAdd" (click)="getSingleTarea(item)"><i class="fa fa-cloud-upload"></i> Subir tarea</button>
+                            <button class="btn btn-warning" *ngIf="item.tipo_tarea == 'EVALUACION'"><i class="fa fa-file-text-o"></i> Contestar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="card-title">Bimestre IV</h4>
+            <div class="row">
+                <div class="col-md-4" *ngFor="let item of tareasBimestreIV">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            <h4 class="m-b-0">{{ item?.nombre }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'TAREA'">Sube tu tarea seleccionando el archivo correspondiente desde tu dispositivo. </p>
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'EVALUACION'">Contesta todas las preguntas y asegúrate de revisar tus respuestas antes de enviar el parcial. </p>
+                            <button class="btn btn-primary" *ngIf="item.tipo_tarea == 'TAREA'" data-toggle="modal" data-target="#modalFormDataAdd" (click)="getSingleTarea(item)"><i class="fa fa-cloud-upload"></i> Subir tarea</button>
+                            <button class="btn btn-warning" *ngIf="item.tipo_tarea == 'EVALUACION'"><i class="fa fa-file-text-o"></i> Contestar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="card-title">Bimestre V</h4>
+            <div class="row">
+                <div class="col-md-4" *ngFor="let item of tareasBimestreV">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            <h4 class="m-b-0">{{ item?.nombre }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'TAREA'">Sube tu tarea seleccionando el archivo correspondiente desde tu dispositivo. </p>
+                            <p class="card-text" *ngIf="item.tipo_tarea == 'EVALUACION'">Contesta todas las preguntas y asegúrate de revisar tus respuestas antes de enviar el parcial. </p>
+                            <button class="btn btn-primary" *ngIf="item.tipo_tarea == 'TAREA'" data-toggle="modal" data-target="#modalFormDataAdd" (click)="getSingleTarea(item)"><i class="fa fa-cloud-upload"></i> Subir tarea</button>
+                            <button class="btn btn-warning" *ngIf="item.tipo_tarea == 'EVALUACION'"><i class="fa fa-file-text-o"></i> Contestar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="asistencia-student" role="tabpanel" aria-labelledby="asistencia-student-tab">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th>¿Asistió?</th>
+                            <th>¿Trae justificación?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of asistencias">
+                            <td>{{ usuario?.nombres }} {{ usuario?.apellidos }}</td>
+                            <td>{{item.fecha | date: 'd/M/yyyy'}}</td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="filled-in chk-col-cyan" type="checkbox" value="" id="defaultCheck{{item.asistencia[0].id}}" [checked]="item.asistencia[0].asistio" disabled>
+                                    <label class="form-check-label" for="defaultCheck{{item.asistencia[0].id}}"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="filled-in chk-col-cyan" type="checkbox" value="" id="defaultCheckJ{{item.asistencia[0].id}}" [checked]="item.asistencia[0].justificacion" disabled>
+                                    <label class="form-check-label" for="defaultCheckJ{{item.asistencia[0].id}}"></label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="notas-student" role="tabpanel" aria-labelledby="notas-student-tab">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Fecha de entrega</th>
+                            <th>Bimestre</th>
+                            <th>Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of notas">
+                            <td>{{ item.nombre }}</td>
+                            <td *ngIf="item.realizado">{{ item.realizado | date: 'd/M/yyyy, h:mm a' }}</td>
+                            <td *ngIf="!item.realizado">No disponible</td>
+                            <td>{{ item?.bimestre }}</td>
+                            <td>{{ item.nota ?? '0' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog form-material" autocomplete="off" (ngSubmit)="enviarTarea()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Subir archivo</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="file" id="input-file-now" class="dropify" (change)="seleccionArchivo($event)" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit"
+                    class="btn text-uppercase btn-rounded btn-dark">Subir tarea</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+

@@ -1,0 +1,258 @@
+<div class="row p-b-10">
+    <div class="col-lg-6 col-md-12">
+        <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" data-toggle="modal"
+            data-target="#modalFormDataAdd">
+            Agregar
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Fecha Creación</th>
+                        <th>Fecha Actualización</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data">
+                        <th>{{item.id}}</th>
+                        <td>{{item.nombres}}</td>
+                        <td>{{item.apellidos}}</td>
+                        <td>{{item.email}}</td>
+                        <td>
+                            <span class="label label-info label-rounded" *ngIf="item.rol=='ADMINISTRADOR'">{{item.rol}}</span>
+                            <span class="label label-success label-rounded" *ngIf="item.rol=='MAESTRO'">{{item.rol}}</span>
+                            <span class="label label-success label-rounded" *ngIf="item.rol=='DIRECTOR'">{{item.rol}}</span>
+                            <span class="label label-success label-rounded" *ngIf="item.rol=='ESTUDIANTE'">{{item.rol}}</span>
+                        </td>
+                        <td>{{item.createdAt | date: 'd/M/yyyy, h:mm a'}}</td>
+                        <td>{{item.updatedAt | date: 'd/M/yyyy, h:mm a'}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary text-uppercase btn-rounded" alt="default"
+                                    data-toggle="modal" data-target="#modalFormDataUpdate" (click)="getSingle(item)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger text-uppercase btn-rounded"
+                                    (click)="delete(item.id)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning text-uppercase btn-rounded"
+                                    (click)="changePassword(item.id)">
+                                    <i class="fa fa-lock"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="create()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar Usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Nombres</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="nombres"
+                                name="nombres">
+                            <div class="has-danger" *ngIf="nombres?.invalid && (nombres?.dirty || nombres?.touched)">
+                                <div *ngIf="nombres?.errors?.required" class="form-control-feedback">
+                                    Los nombress son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="nombres?.invalid && (nombres?.dirty || nombres?.touched)">
+                                <div *ngIf="nombres?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Apellidos</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="apellidos"
+                                name="apellidos">
+                            <div class="has-danger" *ngIf="apellidos?.invalid && (apellidos?.dirty || apellidos?.touched)">
+                                <div *ngIf="apellidos?.errors?.required" class="form-control-feedback">
+                                    Los apellidos son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="apellidos?.invalid && (apellidos?.dirty || apellidos?.touched)">
+                                <div *ngIf="apellidos?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Correo</label>
+                            <input type="email" class="form-control" id="recipient-name" formControlName="email"
+                                name="email">
+                            <div class="has-danger" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                                <div *ngIf="email?.errors?.required" class="form-control-feedback">
+                                    El correo es un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                                <div *ngIf="email?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Contraseña</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="password"
+                                name="password">
+                            <div class="has-danger" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+                                <div *ngIf="password?.errors?.required" class="form-control-feedback">
+                                    La contraseña es un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+                                <div *ngIf="password?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Tipo de usuario</label>
+                            <select class="form-control" formControlName="rol" name="rol">
+                                <option value="ADMINISTRADOR">Administrador</option>
+                                <option value="MAESTRO">Maestro</option>
+                                <option value="DIRECTOR">Director</option>
+                                <option value="ESTUDIANTE">Estudiante</option>
+                            </select>
+                            <div class="has-danger" *ngIf="rol?.invalid && (rol?.dirty || rol?.touched)">
+                                <div *ngIf="rol?.errors?.required" class="form-control-feedback">
+                                    El tipo de usuario es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                   MODAL RESPONSIVE ACTUALIZA                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataUpdate" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formDataUpdate" (ngSubmit)="update()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Actualizar Usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Nombres</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="u_nombres"
+                                name="u_nombres">
+                            <div class="has-danger" *ngIf="u_nombres?.invalid && (u_nombres?.dirty || u_nombres?.touched)">
+                                <div *ngIf="u_nombres?.errors?.required" class="form-control-feedback">
+                                    Los u_nombress son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="u_nombres?.invalid && (u_nombres?.dirty || u_nombres?.touched)">
+                                <div *ngIf="u_nombres?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Apellidos</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="u_apellidos"
+                                name="u_apellidos">
+                            <div class="has-danger" *ngIf="u_apellidos?.invalid && (u_apellidos?.dirty || u_apellidos?.touched)">
+                                <div *ngIf="u_apellidos?.errors?.required" class="form-control-feedback">
+                                    Los u_apellidos son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="u_apellidos?.invalid && (u_apellidos?.dirty || u_apellidos?.touched)">
+                                <div *ngIf="u_apellidos?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Correo</label>
+                            <input type="email" class="form-control" id="recipient-name" formControlName="u_email"
+                                name="u_email">
+                            <div class="has-danger" *ngIf="u_email?.invalid && (u_email?.dirty || u_email?.touched)">
+                                <div *ngIf="u_email?.errors?.required" class="form-control-feedback">
+                                    El correo es un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="u_email?.invalid && (u_email?.dirty || u_email?.touched)">
+                                <div *ngIf="u_email?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Tipo de usuario</label>
+                            <select class="form-control" formControlName="u_rol" name="u_rol">
+                                <option value="ADMINISTRADOR">Administrador</option>
+                                <option value="MAESTRO">Maestro</option>
+                                <option value="DIRECTOR">Director</option>
+                                <option value="ESTUDIANTE">Estudiante</option>
+                            </select>
+                            <div class="has-danger" *ngIf="u_rol?.invalid && (u_rol?.dirty || u_rol?.touched)">
+                                <div *ngIf="u_rol?.errors?.required" class="form-control-feedback">
+                                    El tipo de usuario es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal">Cerrar</button>
+                <button type="submit" [disabled]="!formDataUpdate.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                  MODAL RESPONSIVE ACTUALIZAR                   -->
+<!-- ============================================================== -->

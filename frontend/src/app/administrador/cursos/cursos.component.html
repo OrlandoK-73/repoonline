@@ -1,0 +1,128 @@
+<div class="row p-b-10">
+    <div class="col-lg-6 col-md-12">
+        <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" data-toggle="modal"
+            data-target="#modalFormDataAdd">
+            Agregar
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Fecha Creación</th>
+                        <th>Fecha Actualización</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data">
+                        <th>{{item.id}}</th>
+                        <td>{{item.nombre}}</td>
+                        <td>{{item.createdAt | date: 'd/M/yyyy, h:mm a'}}</td>
+                        <td>{{item.updatedAt | date: 'd/M/yyyy, h:mm a'}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary text-uppercase btn-rounded" alt="default"
+                                    data-toggle="modal" data-target="#modalFormDataUpdate" (click)="getSingle(item)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger text-uppercase btn-rounded"
+                                    (click)="delete(item.id)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="create()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar Curso</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nombre</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="nombre"
+                        name="nombre">
+                    <div class="has-danger" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                        <div *ngIf="nombre?.errors?.required" class="form-control-feedback">
+                            El nombre es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                        <div *ngIf="nombre?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                   MODAL RESPONSIVE ACTUALIZA                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataUpdate" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="update()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Actualizar Curso</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nombre</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="nombre"
+                        name="nombre">
+                    <div class="has-danger" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                        <div *ngIf="nombre?.errors?.required" class="form-control-feedback">
+                            El nombre es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                        <div *ngIf="nombre?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                  MODAL RESPONSIVE ACTUALIZAR                   -->
+<!-- ============================================================== -->

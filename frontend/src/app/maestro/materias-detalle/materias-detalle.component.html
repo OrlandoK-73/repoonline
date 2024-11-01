@@ -1,0 +1,480 @@
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-themecolor">{{ data?.curso?.nombre }}</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Materias</a>
+            </li>
+            <li class="breadcrumb-item active">{{ data?.curso?.nombre }}</li>
+        </ol>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                          NAV PILLS                             -->
+<!-- ============================================================== -->
+<ul class="nav nav-pills nav-fill mb-3" id="myTab" role="tablist">
+  <a class="nav-item nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Alumnos</a>
+  <a class="nav-item nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Asistencias</a>
+  <a class="nav-item nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Tareas</a>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    <thead>
+                        <tr>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Email</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of estudiantes">
+                            <td>{{item?.estudiante?.nombres}}</td>
+                            <td>{{item?.estudiante?.apellidos}}</td>
+                            <td>{{item?.estudiante?.email}}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-primary text-uppercase btn-rounded" alt="default"
+                                        routerLink="/maestro/notas/{{asignacionMaestroId}}/{{item.estudiante.id}}">
+                                        <i class="fa fa-file-text"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <div class="row p-b-10">
+        <div class="col-lg-6 col-md-12">
+            <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" data-toggle="modal"
+                data-target="#modalFormDataAdd">
+                Agregar
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th *ngFor="let fecha of fechas">{{ fecha | date:'dd/MM/yyyy' }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of filtradas">
+                            <th>{{ item.nombres }} {{ item.apellidos }}</th>
+                            <th  *ngFor="let entry of getAsistioKeys(item)">
+                                <div class="form-check">
+                                    <input class="filled-in chk-col-green" type="checkbox" value="" id="defaultCheck{{item.id}}" [checked]="entry.value">
+                                    <label class="form-check-label" for="defaultCheck1"></label>
+                                </div>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+  </div>
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+    
+    <div class="row p-b-10">
+        <div class="col-lg-6 col-md-12">
+            <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" data-toggle="modal"
+                data-target="#modalFormDataAddTarea">
+                Agregar
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Nota</th>
+                            <th>Fecha Límite</th>
+                            <th>Bimestre</th>
+                            <th>Estado</th>
+                            <th>Tipo de tarea</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of tareas">
+                            <td>{{item?.nombre}}</td>
+                            <td>{{item?.nota}}</td>
+                            <td>{{item?.fechaLimite | date: 'd/M/yyyy'}}</td>
+                            <td>{{item?.bimestre}}</td>
+                            <td>
+                                <span class="label label-success label-rounded" *ngIf="item.estado=='1'">Activo</span>
+                                <span class="label label-danger label-rounded" *ngIf="item.estado=='0'">Inactivo</span>
+                            </td>
+                            <td>
+                                <span class="label label-primary label-rounded" *ngIf="item.tipo_tarea=='TAREA'">Tarea</span>
+                                <span class="label label-info label-rounded" *ngIf="item.tipo_tarea=='EVALUACION'">Evaluación</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary text-uppercase btn-rounded" alt="default"
+                                        data-toggle="modal" data-target="#modalFormDataUpdateTarea" (click)="getSingleTarea(item)">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger text-uppercase btn-rounded" (click)="delete(item.id)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <a *ngIf="item.tipo_tarea=='EVALUACION'" routerLink="/maestro/evaluaciones/{{item.id}}" class="btn btn-info text-uppercase btn-rounded">
+                                        <i class="fa fa-file-text-o"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="create()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar Asistencia</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Bimestre</label>
+                            <select class="form-control" formControlName="bimestre" name="bimestre">
+                                <option value="PRIMER">Primer bimestre</option>
+                                <option value="SEGUNDO">Segundo bimestre</option>
+                                <option value="TERCER">Tercer bimestre</option>
+                                <option value="CUARTO">Cuarto bimestre</option>
+                                <option value="QUINTO">Quinto bimestre</option>
+                            </select>
+                            <div class="has-danger" *ngIf="bimestre?.invalid && (bimestre?.dirty || bimestre?.touched)">
+                                <div *ngIf="bimestre?.errors?.required" class="form-control-feedback">
+                                    El bimestre es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="recipient-name"
+                                formControlName="fecha" name="fecha">
+                            <div class="has-danger" *ngIf="fecha?.invalid && (fecha?.dirty || fecha?.touched)">
+                                <div *ngIf="fecha?.errors?.required" class="form-control-feedback">
+                                    La fecha es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombres</th>
+                            <th>Asistencia</th>
+                            <th>Justificación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of estudiantesAsistencia; let i = index">
+                            <th>{{item?.estudiante?.id}}</th>
+                            <td>{{item?.estudiante?.nombres}} {{item?.estudiante?.apellidos}}</td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="filled-in chk-col-cyan" type="checkbox" value="" id="asistio{{item?.estudiante?.id}}" (change)="onAsistioChange(i, $event)">
+                                    <label class="form-check-label" for="asistio{{item?.estudiante?.id}}">
+                                        ¿Asistió?
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="filled-in chk-col-cyan" type="checkbox" value="" id="tieneJustificacion{{item?.estudiante?.id}}" (change)="onJustificacionChange(i, $event)">
+                                    <label class="form-check-label" for="tieneJustificacion{{item?.estudiante?.id}}">
+                                        ¿Trae justificación?
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAddTarea" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formDataTarea" (ngSubmit)="createTarea()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar tarea</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeFormTarea()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Nombre</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="nombre"
+                                name="nombre">
+                            <div class="has-danger" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                                <div *ngIf="nombre?.errors?.required" class="form-control-feedback">
+                                    Los nombres son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                                <div *ngIf="nombre?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Nota</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="nota"
+                                name="nota">
+                            <div class="has-danger" *ngIf="nota?.invalid && (nota?.dirty || nota?.touched)">
+                                <div *ngIf="nota?.errors?.required" class="form-control-feedback">
+                                    Los notas son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="nota?.invalid && (nota?.dirty || nota?.touched)">
+                                <div *ngIf="nota?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Fecha Límite</label>
+                            <input type="date" class="form-control" id="recipient-name"
+                                formControlName="fechaLimite" name="fechaLimite">
+                            <div class="has-danger" *ngIf="fechaLimite?.invalid && (fechaLimite?.dirty || fechaLimite?.touched)">
+                                <div *ngIf="fechaLimite?.errors?.required" class="form-control-feedback">
+                                    La fecha límite es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Estado</label>
+                            <select class="form-control" formControlName="estado" name="estado">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                            <div class="has-danger" *ngIf="estado?.invalid && (estado?.dirty || estado?.touched)">
+                                <div *ngIf="estado?.errors?.required" class="form-control-feedback">
+                                    El estado es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Bimestre</label>
+                            <select class="form-control" formControlName="bimestre" name="bimestres">
+                                <option value="PRIMER">Primer bimestre</option>
+                                <option value="SEGUNDO">Segundo bimestre</option>
+                                <option value="TERCER">Tercer bimestre</option>
+                                <option value="CUARTO">Cuarto bimestre</option>
+                                <option value="QUINTO">Quinto bimestre</option>
+                            </select>
+                            <div class="has-danger" *ngIf="bimestres?.invalid && (bimestres?.dirty || bimestres?.touched)">
+                                <div *ngIf="bimestres?.errors?.required" class="form-control-feedback">
+                                    El bimestre es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Tipo de tarea</label>
+                            <select class="form-control" formControlName="tipo_tarea" name="tipo_tarea">
+                                <option value="TAREA">Tarea</option>
+                                <option value="EVALUACION">Evaluación</option>
+                            </select>
+                            <div class="has-danger" *ngIf="tipo_tarea?.invalid && (tipo_tarea?.dirty || tipo_tarea?.touched)">
+                                <div *ngIf="tipo_tarea?.errors?.required" class="form-control-feedback">
+                                    El tipo de tarea es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeFormTarea()">Cerrar</button>
+                <button type="submit" [disabled]="!formDataTarea.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE EDITAR                    -->
+<!-- ============================================================== -->
+<div id="modalFormDataUpdateTarea" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog modal-lg form-material" autocomplete="off" [formGroup]="formDataTarea" (ngSubmit)="updateTarea()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar tarea</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeFormTarea()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Nombre</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="nombre"
+                                name="nombre">
+                            <div class="has-danger" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                                <div *ngIf="nombre?.errors?.required" class="form-control-feedback">
+                                    Los nombres son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="nombre?.invalid && (nombre?.dirty || nombre?.touched)">
+                                <div *ngIf="nombre?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Nota</label>
+                            <input type="text" class="form-control" id="recipient-name" formControlName="nota"
+                                name="nota">
+                            <div class="has-danger" *ngIf="nota?.invalid && (nota?.dirty || nota?.touched)">
+                                <div *ngIf="nota?.errors?.required" class="form-control-feedback">
+                                    Los notas son un campo obligatorio
+                                </div>
+                            </div>
+                            <div class="has-warning" *ngIf="nota?.invalid && (nota?.dirty || nota?.touched)">
+                                <div *ngIf="nota?.errors?.maxlength" class="form-control-feedback">
+                                    La longitud máxima es de 100 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Fecha Límite</label>
+                            <input type="date" class="form-control" id="recipient-name"
+                                formControlName="fechaLimite" name="fechaLimite">
+                            <div class="has-danger" *ngIf="fechaLimite?.invalid && (fechaLimite?.dirty || fechaLimite?.touched)">
+                                <div *ngIf="fechaLimite?.errors?.required" class="form-control-feedback">
+                                    La fecha límite es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Estado</label>
+                            <select class="form-control" formControlName="estado" name="estado">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                            <div class="has-danger" *ngIf="estado?.invalid && (estado?.dirty || estado?.touched)">
+                                <div *ngIf="estado?.errors?.required" class="form-control-feedback">
+                                    El estado es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Bimestre</label>
+                            <select class="form-control" formControlName="bimestre" name="bimestres">
+                                <option value="PRIMER">Primer bimestre</option>
+                                <option value="SEGUNDO">Segundo bimestre</option>
+                                <option value="TERCER">Tercer bimestre</option>
+                                <option value="CUARTO">Cuarto bimestre</option>
+                                <option value="QUINTO">Quinto bimestre</option>
+                            </select>
+                            <div class="has-danger" *ngIf="bimestres?.invalid && (bimestres?.dirty || bimestres?.touched)">
+                                <div *ngIf="bimestres?.errors?.required" class="form-control-feedback">
+                                    El bimestre es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Tipo de tarea</label>
+                            <select class="form-control" formControlName="tipo_tarea" name="tipo_tarea">
+                                <option value="TAREA">Tarea</option>
+                                <option value="EVALUACION">Evaluación</option>
+                            </select>
+                            <div class="has-danger" *ngIf="tipo_tarea?.invalid && (tipo_tarea?.dirty || tipo_tarea?.touched)">
+                                <div *ngIf="tipo_tarea?.errors?.required" class="form-control-feedback">
+                                    El tipo de tarea es un campo obligatorio
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeFormTarea()">Cerrar</button>
+                <button type="submit" [disabled]="!formDataTarea.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE EDITAR                    -->
+<!-- ============================================================== -->

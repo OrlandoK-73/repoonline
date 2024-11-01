@@ -1,0 +1,142 @@
+<div class="row">
+    <div class="col-lg-4 col-xlg-3 col-md-5">
+        <div class="card"> <img class="card-img" src="../../../assets/images/umg.png" alt="Card image">
+            <div class="card-img-overlay card-inverse social-profile d-flex ">
+                <div class="align-self-center"> <img src="../../../assets/images/umg.png" class="img-circle" width="100">
+                    <h4 class="card-title">{{usuario.nombres}} {{usuario.apellidos}}</h4>
+                    <h6 class="card-subtitle">{{usuario.email}}</h6>
+                    <p class="text-white">AULA DIGITAL, ESCUELA CHIACAL, TACTIC ALTA VERAPAZ</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <div class="col-lg-8 col-xlg-9 col-md-7">
+        <div class="card">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs profile-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Perfil</a>
+                </li>
+                <li class="nav-item"> 
+                    <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Cambiar Contraseña</a> 
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="home" role="tabpanel">
+                    <div class="card-body">
+                        <form class="form-horizontal form-material"
+                        autocomplete="off"
+                        [formGroup]="formData"
+                        (ngSubmit)="saveChanges()">
+                            <div class="form-group">
+                                <label for="nombre" class="control-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombres" formControlName="nombres"
+                                    name="nombres">
+                                <div class="has-danger" *ngIf="nombres?.invalid && (nombres?.dirty || nombres?.touched)">
+                                    <div *ngIf="nombres?.errors?.required" class="form-control-feedback">
+                                        El nombres es un campo obligatorio
+                                    </div>
+                                </div>
+                                <div class="has-warning" *ngIf="nombres?.invalid && (nombres?.dirty || nombres?.touched)">
+                                    <div *ngIf="nombres?.errors?.maxlength" class="form-control-feedback">
+                                        La longitud máxima es de 255 caracteres
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="apellido" class="control-label">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" formControlName="apellidos"
+                                    name="apellidos">
+                                <div class="has-danger" *ngIf="apellidos?.invalid && (apellidos?.dirty || apellidos?.touched)">
+                                    <div *ngIf="apellidos?.errors?.required" class="form-control-feedback">
+                                        El apellidos es un campo obligatorio
+                                    </div>
+                                </div>
+                                <div class="has-warning" *ngIf="apellidos?.invalid && (apellidos?.dirty || apellidos?.touched)">
+                                    <div *ngIf="apellidos?.errors?.maxlength" class="form-control-feedback">
+                                        La longitud máxima es de 255 caracteres
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="correo" class="control-label">Correo Electrónico</label>
+                                <input type="text" class="form-control" id="correo" formControlName="email"
+                                    name="email">
+                                <div class="has-danger" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                                    <div *ngIf="email?.errors?.required" class="form-control-feedback">
+                                        El email es un campo obligatorio
+                                    </div>
+                                </div>
+                                <div class="has-warning" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                                    <div *ngIf="email?.errors?.maxlength" class="form-control-feedback">
+                                        La longitud máxima es de 255 caracteres
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" [disabled]="!formData.valid"
+                                class="btn btn-rounded text-uppercase btn-dark">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- <!--third tab -->
+                <div class="tab-pane" id="profile" role="tabpanel">
+                    <div class="card-body">
+                        <form class="form-horizontal form-material"
+                            [formGroup]="formDataPassword"
+                            (ngSubmit)="resetPassword()">
+                            <div class="form-group">
+                                <label for="passwordOld" class="control-label">Contraseña Antigua</label>
+                                <input type="password" class="form-control" id="passwordOld" formControlName="passwordOld"
+                                    name="passwordOld">
+                                <div class="has-danger" *ngIf="passwordOld?.invalid && (passwordOld?.dirty || passwordOld?.touched)">
+                                    <div *ngIf="passwordOld?.errors?.required" class="form-control-feedback">
+                                        La contraseña antigua es un campo obligatorio
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="control-label">Contraseña Nueva</label>
+                                <input type="password" class="form-control" id="password" formControlName="password"
+                                    name="password">
+                                <div class="has-danger" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+                                    <div *ngIf="password?.errors?.required" class="form-control-feedback">
+                                        La contraseña nueva es un campo obligatorio
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="passwordRepeat" class="control-label">Confirmar contraseña</label>
+                                <input type="password" class="form-control" id="passwordRepeat" formControlName="passwordRepeat"
+                                    name="passwordRepeat">
+                                <div class="has-danger" *ngIf="passwordRepeat?.invalid && (passwordRepeat?.dirty || passwordRepeat?.touched)">
+                                    <div *ngIf="passwordRepeat?.errors?.required" class="form-control-feedback">
+                                        Confirmar contraseña es un campo obligatorio
+                                    </div>
+                                </div>
+                                <div class="has-danger" *ngIf="password?.value != passwordRepeat?.value">
+                                    <div *ngIf="passwordRepeat?.errors?.required" class="form-control-feedback">
+                                        Las contraseñas no son iguales
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" [disabled]="!formDataPassword.valid"
+                                class="btn btn-rounded text-uppercase btn-dark">Actualizar Contraseña</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+</div>
+<!-- Row -->
+<!-- ============================================================== -->
+<!-- End PAge Content -->
+<!-- ============================================================== -->

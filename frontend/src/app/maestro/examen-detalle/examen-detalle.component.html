@@ -1,0 +1,374 @@
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-themecolor">{{ data?.nombre }}</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Materias</a>
+            </li>
+            <li class="breadcrumb-item" href="javascript:void(0)">
+                <a href="javascript:void(0)">{{ data?.asignacion_maestro?.curso?.nombre }}</a>
+            </li>
+            <li class="breadcrumb-item active">{{ data?.nombre }}</li>
+        </ol>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+
+<div class="row p-b-10">
+    <div class="col-lg-6 col-md-12">
+        <button type="button" class="btn waves-effect waves-light btn-rounded btn-dark" data-toggle="modal"
+            data-target="#modalFormDataAdd">
+            Agregar
+        </button>
+    </div>
+</div>
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Pregunta</th>
+                        <th>Punteo</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of preguntas">
+                        <th>{{item.id}}</th>
+                        <td>{{item.pregunta}}</td>
+                        <td>{{item.punteo}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary text-uppercase btn-rounded" alt="default"
+                                    data-toggle="modal" data-target="#modalFormDataUpdate" (click)="getSinglePregunta(item)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger text-uppercase btn-rounded"
+                                    (click)="delete(item.id)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataAdd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="create()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar pregunta</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Tipo de usuario</label>
+                    <select class="form-control" formControlName="tipo_pregunta" name="tipo_pregunta">
+                        <option value="MULTIPLE">Respuesta Multiple</option>
+                        <option value="FV">Falso/Verdadero</option>
+                        <option value="DIRECTA">Directa</option>
+                    </select>
+                    <div class="has-danger" *ngIf="tipo_pregunta?.invalid && (tipo_pregunta?.dirty || tipo_pregunta?.touched)">
+                        <div *ngIf="tipo_pregunta?.errors?.required" class="form-control-feedback">
+                            El tipo de usuario es un campo obligatorio
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Pregunta</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="pregunta"
+                        name="pregunta">
+                    <div class="has-danger" *ngIf="pregunta?.invalid && (pregunta?.dirty || pregunta?.touched)">
+                        <div *ngIf="pregunta?.errors?.required" class="form-control-feedback">
+                            La pregunta es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="pregunta?.invalid && (pregunta?.dirty || pregunta?.touched)">
+                        <div *ngIf="pregunta?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 1</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta1"
+                        name="respuesta1" >
+                    <div class="has-warning" *ngIf="respuesta1?.invalid && (respuesta1?.dirty || respuesta1?.touched)">
+                        <div *ngIf="respuesta1?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 2</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta2"
+                        name="respuesta2">
+                    <div class="has-warning" *ngIf="respuesta2?.invalid && (respuesta2?.dirty || respuesta2?.touched)">
+                        <div *ngIf="respuesta2?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 3</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta3"
+                        name="respuesta3">
+                    <div class="has-warning" *ngIf="respuesta3?.invalid && (respuesta3?.dirty || respuesta3?.touched)">
+                        <div *ngIf="respuesta3?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 4</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta4"
+                        name="respuesta4">
+                    <div class="has-warning" *ngIf="respuesta4?.invalid && (respuesta4?.dirty || respuesta4?.touched)">
+                        <div *ngIf="respuesta4?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta correcta</label>
+                    <select class="form-control" formControlName="correcta" name="correcta">
+                        <option value="RESPUESTA1">Respuesta 1</option>
+                        <option value="RESPUESTA2">Respuesta 2</option>
+                        <option value="RESPUESTA3">Respuesta 3</option>
+                        <option value="RESPUESTA4">Respuesta 4</option>
+                    </select>
+                    <div class="has-danger" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.required" class="form-control-feedback">
+                            La respuesta es un campo obligatorio
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='FV'">
+                    <label for="recipient-name" class="control-label">Respuesta correcta</label>
+                    <select class="form-control" formControlName="correcta" name="correcta">
+                        <option value="FALSO">Falso</option>
+                        <option value="VERDADERO">Verdadero</option>
+                    </select>
+                    <div class="has-danger" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.required" class="form-control-feedback">
+                            La respuesta es un campo obligatorio
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='DIRECTA'">
+                    <label for="recipient-name" class="control-label">Respuesta correcta</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="correcta"
+                        name="correcta">
+                    <div class="has-danger" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.required" class="form-control-feedback">
+                            La respuesta correcta es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Punteo</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="punteo"
+                        name="punteo">
+                    <div class="has-danger" *ngIf="punteo?.invalid && (punteo?.dirty || punteo?.touched)">
+                        <div *ngIf="punteo?.errors?.required" class="form-control-feedback">
+                            El punteo es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="punteo?.invalid && (punteo?.dirty || punteo?.touched)">
+                        <div *ngIf="punteo?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE AGREGAR                   -->
+<!-- ============================================================== -->
+
+
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE EDITAR                   -->
+<!-- ============================================================== -->
+<div id="modalFormDataUpdate" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="display: none;">
+    <form class="modal-dialog form-material" autocomplete="off" [formGroup]="formData" (ngSubmit)="update()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Editar pregunta</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="initializeForm()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Tipo de usuario</label>
+                    <select class="form-control" formControlName="tipo_pregunta" name="tipo_pregunta">
+                        <option value="MULTIPLE">Respuesta Multiple</option>
+                        <option value="FV">Falso/Verdadero</option>
+                        <option value="DIRECTA">Directa</option>
+                    </select>
+                    <div class="has-danger" *ngIf="tipo_pregunta?.invalid && (tipo_pregunta?.dirty || tipo_pregunta?.touched)">
+                        <div *ngIf="tipo_pregunta?.errors?.required" class="form-control-feedback">
+                            El tipo de usuario es un campo obligatorio
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Pregunta</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="pregunta"
+                        name="pregunta">
+                    <div class="has-danger" *ngIf="pregunta?.invalid && (pregunta?.dirty || pregunta?.touched)">
+                        <div *ngIf="pregunta?.errors?.required" class="form-control-feedback">
+                            La pregunta es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="pregunta?.invalid && (pregunta?.dirty || pregunta?.touched)">
+                        <div *ngIf="pregunta?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 1</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta1"
+                        name="respuesta1" >
+                    <div class="has-warning" *ngIf="respuesta1?.invalid && (respuesta1?.dirty || respuesta1?.touched)">
+                        <div *ngIf="respuesta1?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 2</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta2"
+                        name="respuesta2">
+                    <div class="has-warning" *ngIf="respuesta2?.invalid && (respuesta2?.dirty || respuesta2?.touched)">
+                        <div *ngIf="respuesta2?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 3</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta3"
+                        name="respuesta3">
+                    <div class="has-warning" *ngIf="respuesta3?.invalid && (respuesta3?.dirty || respuesta3?.touched)">
+                        <div *ngIf="respuesta3?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta 4</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="respuesta4"
+                        name="respuesta4">
+                    <div class="has-warning" *ngIf="respuesta4?.invalid && (respuesta4?.dirty || respuesta4?.touched)">
+                        <div *ngIf="respuesta4?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='MULTIPLE'">
+                    <label for="recipient-name" class="control-label">Respuesta correcta</label>
+                    <select class="form-control" formControlName="correcta" name="correcta">
+                        <option value="RESPUESTA1">Respuesta 1</option>
+                        <option value="RESPUESTA2">Respuesta 2</option>
+                        <option value="RESPUESTA3">Respuesta 3</option>
+                        <option value="RESPUESTA4">Respuesta 4</option>
+                    </select>
+                    <div class="has-danger" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.required" class="form-control-feedback">
+                            La respuesta es un campo obligatorio
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='FV'">
+                    <label for="recipient-name" class="control-label">Respuesta correcta</label>
+                    <select class="form-control" formControlName="correcta" name="correcta">
+                        <option value="FALSO">Falso</option>
+                        <option value="VERDADERO">Verdadero</option>
+                    </select>
+                    <div class="has-danger" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.required" class="form-control-feedback">
+                            La respuesta es un campo obligatorio
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="formData.value.tipo_pregunta=='DIRECTA'">
+                    <label for="recipient-name" class="control-label">Respuesta correcta</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="correcta"
+                        name="correcta">
+                    <div class="has-danger" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.required" class="form-control-feedback">
+                            La respuesta correcta es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="correcta?.invalid && (correcta?.dirty || correcta?.touched)">
+                        <div *ngIf="correcta?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Punteo</label>
+                    <input type="text" class="form-control" id="recipient-name" formControlName="punteo"
+                        name="punteo">
+                    <div class="has-danger" *ngIf="punteo?.invalid && (punteo?.dirty || punteo?.touched)">
+                        <div *ngIf="punteo?.errors?.required" class="form-control-feedback">
+                            El punteo es un campo obligatorio
+                        </div>
+                    </div>
+                    <div class="has-warning" *ngIf="punteo?.invalid && (punteo?.dirty || punteo?.touched)">
+                        <div *ngIf="punteo?.errors?.maxlength" class="form-control-feedback">
+                            La longitud máxima es de 100 caracteres
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary text-uppercase btn-rounded" data-dismiss="modal"
+                    (click)="initializeForm()">Cerrar</button>
+                <button type="submit" [disabled]="!formData.valid"
+                    class="btn text-uppercase btn-rounded btn-dark">Guardar Cambios</button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ============================================================== -->
+<!--                     MODAL RESPONSIVE EDITAR                    -->
+<!-- ============================================================== -->

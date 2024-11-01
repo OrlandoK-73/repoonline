@@ -1,0 +1,54 @@
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-themecolor">Mis notas</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="javascript:void(0)">Home</a>
+            </li>
+            <li class="breadcrumb-item active">Mis notas</li>
+        </ol>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!--                             BREADCRUMBS                        -->
+<!-- ============================================================== -->
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Curso</th>
+                            <th>Primer bimestre</th>
+                            <th>Segundo bimestre</th>
+                            <th>Tercer bimestre</th>
+                            <th>Cuarto bimestre</th>
+                            <th>Quinto bimestre</th>
+                            <th>Promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of notas; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ item.nombre }}</td>
+                            <td>{{ item.primer }}</td>
+                            <td>{{ item.segundo }}</td>
+                            <td>{{ item.tercer }}</td>
+                            <td>{{ item.cuarto }}</td>
+                            <td>{{ item.quinto }}</td>
+                            <td>{{ item.promedio | number: '1.0-0' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
